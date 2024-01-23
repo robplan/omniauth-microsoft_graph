@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'jwt' # for token signature validation
 require 'omniauth' # to inherit from OmniAuth::Error
 require 'oauth2' # to rescue OAuth2::Error
@@ -36,10 +37,11 @@ module OmniAuth
         # This means while it's not suitable for consistently identifying a user
         # (the domain might change), it is suitable for verifying membership in
         # a given domain.
-        return true if email_domain == upn_domain ||
-          skip_verification == true ||
-          (skip_verification.is_a?(Array) && skip_verification.include?(email_domain)) ||
-          domain_verified_jwt_claim
+        return true if email_domain.downcase == upn_domain.downcase ||
+                       skip_verification == true ||
+                       (skip_verification.is_a?(Array) && skip_verification.include?(email_domain)) ||
+                       domain_verified_jwt_claim
+
         raise DomainVerificationError, verification_error_message
       end
 
